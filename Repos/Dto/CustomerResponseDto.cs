@@ -1,0 +1,13 @@
+﻿using System;
+namespace TopStyleAPI.Repos.Dto
+{
+    public class CustomerResponseDto
+    {
+        // En transportklass som är det format som
+        // web api: et skickar tillbaka data i
+
+        public int CustomerId { get; set; }
+        public string? Email { get; set; }
+    }
+}
+
