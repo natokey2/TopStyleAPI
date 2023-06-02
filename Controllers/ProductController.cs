@@ -78,13 +78,13 @@ namespace TopStyleAPI.Controllers
             newProduct.ProductName = "New Product";
             newProduct.Description = "nice matreal";
             newProduct.Price = 5000;
-            newProduct.CategoryId = 2;
+            newProduct.CategoryId = 3;
             
             
 
             // Create a new Category
             Category newCategory = new Category();
-            newCategory.CategoryName = "New Category";
+            newCategory.CategoryName = "New Product";
             
 
 

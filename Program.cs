@@ -13,7 +13,7 @@ using TopStyleAPI.Data.Repository;
 
 using TopStyleAPI.Repos.Entities;
 
-//my first 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
@@ -23,8 +23,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddTransient<ICustomerRepo,CustomerRepo>();
 
-if (builder.Environment.IsProduction())
-{
+//if (builder.Environment.IsProduction())
+//{
     var keyVaultURL = builder.Configuration.GetSection("KeyVault:KeyVaultURL");
     var keyVaultClientId = builder.Configuration.GetSection("KeyVault:ClientId");
     var keyVaultClientSecret = builder.Configuration.GetSection("KeyVault:ClientSecret");
@@ -41,24 +41,24 @@ if (builder.Environment.IsProduction())
         options.UseSqlServer(client.GetSecret("ProdConnection").Value.Value.ToString());
     });
 
-}
+//}
 
-    if (builder.Environment.IsDevelopment()) 
-    {
+    //if (builder.Environment.IsDevelopment()) 
+    //{
 
-        builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer(
-         builder.Configuration.GetConnectionString("SqlServer")));
+    //    builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer(
+    //     builder.Configuration.GetConnectionString("SqlServer")));
 
-    }
+    //}
 
 
     var app = builder.Build();
-if (app.Environment.IsProduction())
-{
+//if (app.Environment.IsProduction())
+//{
     app.UseSwagger();
   
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
