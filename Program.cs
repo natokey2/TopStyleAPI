@@ -1,12 +1,15 @@
 ﻿
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
+using System.Text;
 using System.Text.Json.Serialization;
 using TopStyleAPI.Data.Interfaces;
 using TopStyleAPI.Data.Repository;
@@ -40,19 +43,40 @@ builder.Services.AddTransient<ICustomerRepo,CustomerRepo>();
     {
         options.UseSqlServer(client.GetSecret("ProdConnection").Value.Value.ToString());
     });
+     //=============================================================//
+
+ builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(opt =>
+{
+opt.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ValidIssuer = "http://localhost:5202/",
+    ValidAudience = "http://localhost:5202/",
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("this is my custom Secret key for authentication"))
+};
+});
+
+//===================================================================//
 
 //}
 
-    //if (builder.Environment.IsDevelopment()) 
-    //{
+//{
 
-    //    builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer(
-    //     builder.Configuration.GetConnectionString("SqlServer")));
+//    builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer(
+//     builder.Configuration.GetConnectionString("SqlServer")));
 
-    //}
+//}
 
 
-    var app = builder.Build();
+var app = builder.Build();
 //if (app.Environment.IsProduction())
 //{
     app.UseSwagger();
@@ -64,6 +88,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseSwagger();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
